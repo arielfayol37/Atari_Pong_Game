@@ -81,8 +81,8 @@ class Dash:
             self.movign_down = False
 
     def set_auto_settings(self):
-        self.settings.speed *= 0.3
-        self.settings.acc *= 0.01
+        self.settings.speed *= self.settings.ai_speed_penalty
+        self.settings.acc *= self.settings.ai_acc_penalty
 
 
 
