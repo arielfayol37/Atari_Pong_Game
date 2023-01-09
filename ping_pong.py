@@ -18,8 +18,8 @@ class Ping_game:
         
         pygame.display.set_caption('Ping Pong')
         #write a function here to check for a second player...
-        self.dash_1 = Dash(self.screen)
-        self.dash_2 = Dash(self.screen, left= False)
+        self.dash_1 = Dash(self)
+        self.dash_2 = Dash(self, left= False)
         self.ping_ball = Ping_ball(self)
         self.play_button = Button(self.screen, 'Play')
         self.game_stats = Gamestats(self)
@@ -29,7 +29,14 @@ class Ping_game:
         self.border_sound = pygame.mixer.Sound('sound_tracks/tap.wav')
         self.game_over_sound = pygame.mixer.Sound('sound_tracks/game_over.wav')
         self.game_over_bool = False
-        
+        self.play_mode_button_1 = Select_mode_button(self.screen, 1)
+        self.play_mode_button_2 = Select_mode_button(self.screen, 2)
+        self.play_mode_button_3 = Select_mode_button(self.screen, 3)
+        self.auto_play_1 = False
+        self.auto_play_2 = False
+        self.select_mode = True
+        self.just_hit_ball = None
+
 
 
     def run_game(self):
@@ -44,7 +51,7 @@ class Ping_game:
                 self.dash_1.update_position()
                 self.dash_2.update_position()
                 if self.ping_ball.visible:
-                    increment1, increment2 = self.ping_ball.update_x_position(self.dash_1, self.dash_2)
+                    increment1, increment2 = self.ping_ball.update_x_position()
 
 
                 #if increment1==1 or increment2 == 1:
@@ -85,22 +92,26 @@ class Ping_game:
                     pygame.mixer.music.pause()
               
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN and not self.auto_play_1:
                     self.dash_1.moving_down = False
                     self.dash_1.reset_speed()
-                elif event.key == pygame.K_UP:
+                elif event.key == pygame.K_UP and not self.auto_play_1:
                     self.dash_1.moving_up = False
                     self.dash_1.reset_speed()
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_s and not self.auto_play_2:
                     self.dash_2.moving_down = False
                     self.dash_2.reset_speed()
-                elif event.key == pygame.K_w:
+                elif event.key == pygame.K_w and not self.auto_play_2:
                     self.dash_2.moving_up = False
                     self.dash_2.reset_speed()
             elif event.type== pygame.MOUSEBUTTONDOWN:
                 mouse_position = pygame.mouse.get_pos()
-                self._check_play_button(mouse_position)
-                pygame.mixer.music.unpause()                   
+                if self.select_mode:
+                    self._check_mode_button(mouse_position)
+                else:    
+                    self._check_play_button(mouse_position)
+                
+                    pygame.mixer.music.unpause()                   
 
     
     def _update_screen(self):
@@ -117,11 +128,17 @@ class Ping_game:
         self.game_stats.draw()
         self._draw_line()
         if not self.game_stats.game_active:
-            self.play_button.draw_button()
+            if self.select_mode:
+                self.play_mode_button_1.draw_button()
+                self.play_mode_button_2.draw_button()
+                self.play_mode_button_3.draw_button()
+                self._draw_option_lines()
+            else:
+                self.play_button.draw_button()
         if self.game_over_bool:
             self.game_over_button.draw_button()
             pygame.display.update()
-            time.sleep(5)
+            time.sleep(3)
             self._get_paul()
             self.screen.blit(self.game_over_img, self.img_rect)
             pygame.display.update()
@@ -137,12 +154,51 @@ class Ping_game:
         if self.play_button.rect.collidepoint(mouse_pos):
             self.game_stats.game_active = True
             pygame.mouse.set_visible(False)
+    def _check_mode_button(self, mouse_pos):
+        if self.play_mode_button_1.rect.collidepoint(mouse_pos):
+            #autoplay
+            self.auto_play_2  = True
+            self.dash_2.auto = True
+            self.dash_2.set_auto_settings()
+            del self.play_mode_button_1
+            del self.play_mode_button_2
+            del self.play_mode_button_3
+            self.select_mode = False
+        elif self.play_mode_button_2.rect.collidepoint(mouse_pos):
+            self.auto_play_1 = False
+            del self.play_mode_button_1
+            del self.play_mode_button_2
+            del self.play_mode_button_3
+            self.select_mode = False
+        elif self.play_mode_button_3.rect.collidepoint(mouse_pos):
+            #autoplay
+            self.auto_play_1  = True
+            self.auto_play_2 = True
+            self.dash_1.auto = True
+            self.dash_1.set_auto_settings()
+            self.dash_2.auto = True
+            self.dash_2.set_auto_settings()
+
+            del self.play_mode_button_1
+            del self.play_mode_button_2
+            del self.play_mode_button_3
+            self.select_mode = False            
 
     def _draw_line(self):
         pygame.draw.line(self.screen, self.settings.line_color, \
             (int(0.5* self.settings.width), int(0.2*self.settings.height)), 
         (int(0.5* self.settings.width),int(0.8*self.settings.height))\
             , self.settings.line_thickness)
+    def _draw_option_lines(self):
+        pygame.draw.line(self.screen, self.settings.line_color, \
+            (int((self.settings.width-self.play_mode_button_1.rect.width)/2), self.play_mode_button_2.rect.y), 
+        (int((self.settings.width-self.play_mode_button_1.rect.width)/2)+self.play_mode_button_1.rect.width,self.play_mode_button_2.rect.y)\
+            , self.settings.line_thickness)
+        pygame.draw.line(self.screen, self.settings.line_color, \
+            (int((self.settings.width-self.play_mode_button_1.rect.width)/2), self.play_mode_button_3.rect.y), 
+        (int((self.settings.width-self.play_mode_button_1.rect.width)/2)+self.play_mode_button_1.rect.width,self.play_mode_button_3.rect.y)\
+            , self.settings.line_thickness)    
+
 
     def game_over(self, message, color):
         self.ping_ball.visible = False
