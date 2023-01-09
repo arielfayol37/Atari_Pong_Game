@@ -19,6 +19,7 @@ class Dash_settings:
 
         self.speed = 1.6
         self.acc = 0.04
+        self.ai_speed_penalty, self.ai_acc_penalty = (0.05,0.01)
 class Ping_settings:
     def __init__(self):
         self.random_speed()#for some reason, using 0.3 in the place of 0.8 makes the game bug
