@@ -38,11 +38,11 @@ class Ping_ball:
     def _speed_y(self):
         self.speedy = sqrt((self.speed ** 2) -(self.speedx**2))
 
-    def update_x_position(self, left_dash, right_dash):
+    def update_x_position(self):
         if self.moving_right:
-            #if self.rect.y < right_dash.rect.y or self.rect.y > right_dash.rect.y+right_dash.rect.height:
+            #if self.rect.y < self.game.dash_2.rect.y or self.rect.y > self.game.dash_2.rect.y+self.game.dash_2.rect.height:
             #check whether it collides with the right dash
-            if not right_dash.rect.colliderect(self.rect):
+            if not self.game.dash_2.rect.colliderect(self.rect):
                 #self.rect.x += self.speedx
                 if (self.rect.x) < self.screen_rect.width:
                     self.rect.x += self.speedx
@@ -51,9 +51,9 @@ class Ping_ball:
                     self._reset_position()
                     self.start_dead_time = pygame.time.get_ticks()
                     self.visible = False
-                    #left_dash.reset_position()
+                    #self.game.dash_1.reset_position()
                     
-                    #right_dash.reset_position()                    
+                    #self.game.dash_2.reset_position()                    
                     #time.sleep(1)
                     return (1,0)
                     #return value to increment score of right dash by 1
@@ -64,18 +64,21 @@ class Ping_ball:
             else:
                 self.game.tap_sound.play()  
                 self._ping_accelerate()
+                self.game.just_hit_ball = self.game.dash_2
+                
+                
             
-                if right_dash.moving_down:
-                    self._accelerate(-right_dash.settings.acc)
-                elif right_dash.moving_up:
-                    self._accelerate(right_dash.settings.acc)
+                if self.game.dash_2.moving_down:
+                    self._accelerate(-self.game.dash_2.settings.acc)
+                elif self.game.dash_2.moving_up:
+                    self._accelerate(self.game.dash_2.settings.acc)
                 self.moving_right = False
                     
                               
         else:
             #check whether it collides with the left dash
             
-            if not left_dash.rect.colliderect(self.rect):
+            if not self.game.dash_1.rect.colliderect(self.rect):
                 
                 if self.rect.x > -self.rect.width:
                     self.rect.x -= self.speedx
@@ -85,18 +88,21 @@ class Ping_ball:
                     self._reset_position()
                     self.start_dead_time = pygame.time.get_ticks()
                     self.visible = False
-                    #left_dash.reset_position()
-                    #right_dash.reset_position()
+                    #self.game.dash_1.reset_position()
+                    #self.game.dash_2.reset_position()
                     #time.sleep(1)
 
                     return (0,1)                
             else:
                 self.game.tap_sound.play() 
                 self._ping_accelerate()
-                if left_dash.moving_down:
-                    self._accelerate(left_dash.settings.acc)
-                elif right_dash.moving_up:
-                    self._accelerate(-left_dash.settings.acc)
+                self.game.just_hit_ball = self.game.dash_1
+                
+                
+                if self.game.dash_1.moving_down:
+                    self._accelerate(self.game.dash_1.settings.acc)
+                elif self.game.dash_2.moving_up:
+                    self._accelerate(-self.game.dash_1.settings.acc)
                 self.moving_right = True
                            
             
@@ -118,12 +124,16 @@ class Ping_ball:
             if (self.rect.y+self.rect.height) < self.screen_rect.height:# not touching bottom screen
                 self.rect.y += self.speedy
             else: #touching bottom screen
+                
+                
                 self.game.border_sound.play()
                 self.moving_down = False
         else:
             if self.rect.y > 0:
                 self.rect.y -= self.speedy
             else:
+                
+                
                 self.game.border_sound.play()
                 self.moving_down = True    
     def _reset_position(self):
@@ -135,6 +145,9 @@ class Ping_ball:
         self.speed = self.settings.speed
         self.speedx = random.uniform(2.0, self.speed)
         self._speed_y()
+        self.game.just_hit_ball = None
+        
+        
     def _accelerate(self, acc):
 
         self.speedy -= acc
@@ -163,19 +176,19 @@ class Ping_ball:
 
 
     """
-    def update_x_position(self, left_dash, right_dash):
+    def update_x_position(self, self.game.dash_1, self.game.dash_2):
         if self.moving_right:
-            if self.rect.y < right_dash.rect.y or self.rect.y > right_dash.rect.y+right_dash.rect.height:
+            if self.rect.y < self.game.dash_2.rect.y or self.rect.y > self.game.dash_2.rect.y+self.game.dash_2.rect.height:
             #check whether it collides with the right dash
-            #if not right_dash.rect.collidepoint(self.rect.x+3, self.rect.y):
+            #if not self.game.dash_2.rect.collidepoint(self.rect.x+3, self.rect.y):
                 #self.rect.x += self.speedx
                 if (self.rect.x+self.rect.width) < self.screen_rect.width:
                     self.rect.x += self.speedx
                 else:
                     
                     self._reset_position()
-                    left_dash.reset_position()
-                    right_dash.reset_position()                    
+                    self.game.dash_1.reset_position()
+                    self.game.dash_2.reset_position()                    
                     time.sleep(2)
                     return (1,0)
                     #return value to increment score of right dash by 1
@@ -184,34 +197,34 @@ class Ping_ball:
             
                                 
             else:
-                if (self.rect.x+self.rect.width) < self.screen_rect.width-right_dash.rect.width:
+                if (self.rect.x+self.rect.width) < self.screen_rect.width-self.game.dash_2.rect.width:
                     self.rect.x += self.speedx
 
                 else:
-                    if right_dash.moving_down:
-                        self._accelerate(right_dash.settings.acc)
-                    elif right_dash.moving_up:
-                        self._accelerate(-right_dash.settings.acc)
+                    if self.game.dash_2.moving_down:
+                        self._accelerate(self.game.dash_2.settings.acc)
+                    elif self.game.dash_2.moving_up:
+                        self._accelerate(-self.game.dash_2.settings.acc)
                     self.moving_right = False      
                               
         else:
             #check whether it collides with the left dash
            
-            #if not left_dash.rect.collidepoint(self.rect.x, self.rect.y):
+            #if not self.game.dash_1.rect.collidepoint(self.rect.x, self.rect.y):
                 #self.rect.x -= self.speedx
             #else:
                 #self.moving_right = True
 
            
-            if self.rect.y < left_dash.rect.y or self.rect.y > left_dash.rect.y+left_dash.rect.height:
+            if self.rect.y < self.game.dash_1.rect.y or self.rect.y > self.game.dash_1.rect.y+self.game.dash_1.rect.height:
                 if self.rect.x > -self.rect.width:
                     self.rect.x -= self.speedx
                 else:
                     #return value to increment of left dash by 1
                     
                     self._reset_position()
-                    left_dash.reset_position()
-                    right_dash.reset_position()
+                    self.game.dash_1.reset_position()
+                    self.game.dash_2.reset_position()
                     time.sleep(1)
 
                     return (0,1)
@@ -219,13 +232,13 @@ class Ping_ball:
                     #self.moving_right = True    
             else:
                 #collision with left dash
-                if self.rect.x > 0 + left_dash.rect.width:
+                if self.rect.x > 0 + self.game.dash_1.rect.width:
                     self.rect.x -= self.speedx
                 else:
-                    if left_dash.moving_down:
-                        self._accelerate(left_dash.settings.acc)
-                    elif right_dash.moving_up:
-                        self._accelerate(-left_dash.settings.acc)
+                    if self.game.dash_1.moving_down:
+                        self._accelerate(self.game.dash_1.settings.acc)
+                    elif self.game.dash_2.moving_up:
+                        self._accelerate(-self.game.dash_1.settings.acc)
                     self.moving_right = True                    
         return (0,0) #the ball did not crass wall  
     """        
