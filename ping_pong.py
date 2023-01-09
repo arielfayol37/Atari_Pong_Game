@@ -75,15 +75,15 @@ class Ping_game:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_s:
                     self.dash_1.moving_down = True
                 
-                elif event.key == pygame.K_UP:
+                elif event.key == pygame.K_w:
                     #assert self.dash_1.moving_down == False if I do this, both keys won't be pressable at the same time...
                     self.dash_1.moving_up = True
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_UP:
                     self.dash_2.moving_down = True
-                elif event.key == pygame.K_w:
+                elif event.key == pygame.K_DOWN:
                     self.dash_2.moving_up = True
                 
                 elif event.key == pygame.K_SPACE:
@@ -92,16 +92,16 @@ class Ping_game:
                     pygame.mixer.music.pause()
               
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_DOWN and not self.auto_play_1:
+                if event.key == pygame.K_s and not self.auto_play_1:
                     self.dash_1.moving_down = False
                     self.dash_1.reset_speed()
-                elif event.key == pygame.K_UP and not self.auto_play_1:
+                elif event.key == pygame.K_w and not self.auto_play_1:
                     self.dash_1.moving_up = False
                     self.dash_1.reset_speed()
-                if event.key == pygame.K_s and not self.auto_play_2:
+                if event.key == pygame.K_DOWN and not self.auto_play_2:
                     self.dash_2.moving_down = False
                     self.dash_2.reset_speed()
-                elif event.key == pygame.K_w and not self.auto_play_2:
+                elif event.key == pygame.K_UP and not self.auto_play_2:
                     self.dash_2.moving_up = False
                     self.dash_2.reset_speed()
             elif event.type== pygame.MOUSEBUTTONDOWN:
@@ -145,6 +145,8 @@ class Ping_game:
             pygame.time.wait(3000)
             self.game_over_bool = False
             self.game_stats.game_active = False
+            self.dash_1.reset_position()
+            self.dash_2.reset_position()
             self.game_stats.player_1_score = 0 
             self.game_stats.player_2_score = 0
             pygame.mouse.set_visible(True)
