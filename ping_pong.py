@@ -1,4 +1,4 @@
-import pygame, sys, tkinter as tk, random, time
+import pygame, sys
 from settings import Screen_settings
 from dash import Dash
 from ping import Ping_ball
@@ -138,11 +138,11 @@ class Ping_game:
         if self.game_over_bool:
             self.game_over_button.draw_button()
             pygame.display.update()
-            time.sleep(3)
+            pygame.time.wait(3)
             self._get_paul()
             self.screen.blit(self.game_over_img, self.img_rect)
             pygame.display.update()
-            time.sleep(3)
+            pygame.time.wait(3)
             self.game_over_bool = False
             self.game_stats.game_active = False
             self.game_stats.player_1_score = 0 
