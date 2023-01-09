@@ -14,7 +14,7 @@ class Dash_settings:
     def __init__(self):
         self.width = 10
         self.height = 100
-        self.colorleft = (144, 238, 144)
+        self.colorleft = (171,35,40)
         self.colorright = (0, 0, 139)
 
         self.speed = 1.6
