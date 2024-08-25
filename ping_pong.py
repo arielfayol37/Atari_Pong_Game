@@ -88,7 +88,7 @@ class Ping_game:
                 if event.key == pygame.K_s:
                     self.dash_1.moving_down = True
                 
-                elif event.key == pygame.K_w:
+                elif event.key == pygame.K_w or event.key == pygame.K_z: # for English and French keyboards
                     #assert self.dash_1.moving_down == False if I do this, both keys won't be pressable at the same time...
                     self.dash_1.moving_up = True
               
@@ -103,7 +103,7 @@ class Ping_game:
                 if event.key == pygame.K_s and not self.auto_play_1:
                     self.dash_1.moving_down = False
                     self.dash_1.reset_speed()
-                elif event.key == pygame.K_w and not self.auto_play_1:
+                elif (event.key == pygame.K_w or event.key == pygame.K_z) and not self.auto_play_1:
                     self.dash_1.moving_up = False
                     self.dash_1.reset_speed()
             elif event.type== pygame.MOUSEBUTTONDOWN:
