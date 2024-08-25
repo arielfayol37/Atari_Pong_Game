@@ -75,35 +75,37 @@ class Ping_game:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.dash_2.moving_up = True
+                elif event.key == pygame.K_DOWN:
+                    self.dash_2.moving_down = True
+                
+                elif event.key == pygame.K_SPACE:
+                    self.game_stats.game_active = False
+                    pygame.mouse.set_visible(True)
+                    pygame.mixer.music.pause()
+
                 if event.key == pygame.K_s:
                     self.dash_1.moving_down = True
                 
                 elif event.key == pygame.K_w:
                     #assert self.dash_1.moving_down == False if I do this, both keys won't be pressable at the same time...
                     self.dash_1.moving_up = True
-                if event.key == pygame.K_UP:
-                    self.dash_2.moving_down = True
-                elif event.key == pygame.K_DOWN:
-                    self.dash_2.moving_up = True
-                
-                elif event.key == pygame.K_SPACE:
-                    self.game_stats.game_active = False
-                    pygame.mouse.set_visible(True)
-                    pygame.mixer.music.pause()
               
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_s and not self.auto_play_1:
-                    self.dash_1.moving_down = False
-                    self.dash_1.reset_speed()
-                elif event.key == pygame.K_w and not self.auto_play_1:
-                    self.dash_1.moving_up = False
-                    self.dash_1.reset_speed()
                 if event.key == pygame.K_DOWN and not self.auto_play_2:
                     self.dash_2.moving_down = False
                     self.dash_2.reset_speed()
                 elif event.key == pygame.K_UP and not self.auto_play_2:
                     self.dash_2.moving_up = False
                     self.dash_2.reset_speed()
+
+                if event.key == pygame.K_s and not self.auto_play_1:
+                    self.dash_1.moving_down = False
+                    self.dash_1.reset_speed()
+                elif event.key == pygame.K_w and not self.auto_play_1:
+                    self.dash_1.moving_up = False
+                    self.dash_1.reset_speed()
             elif event.type== pygame.MOUSEBUTTONDOWN:
                 mouse_position = pygame.mouse.get_pos()
                 if self.select_mode:
